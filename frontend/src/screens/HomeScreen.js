@@ -1,23 +1,46 @@
 import React, { useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import Product from "../components/Product";
 import { listProducts } from "../actions/productActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import Paginate from "../components/Paginate";
+import ProductCarousel from "../components/ProductCarousel";
+import Meta from "../components/Meta";
 
-const HomeScreen = () => {
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+const HomeScreen = ({ location }) => {
   const dispatch = useDispatch();
-  const { loading, error, products } = useSelector(
+  const query = useQuery();
+
+  const keyword = query.get("keyword") || "";
+
+  const pageNumber = query.get("pageNumber") || 1;
+
+  const { loading, error, products, page, pages, pageSize } = useSelector(
     (state) => state.productList
   );
   useEffect(() => {
-    dispatch(listProducts());
-  }, [dispatch]);
+    dispatch(listProducts(keyword, pageNumber));
+  }, [dispatch, keyword, pageNumber]);
 
   return (
     <>
+      <Meta />
+      {!keyword ? (
+        <ProductCarousel />
+      ) : (
+        <Link to="/" className="btn btn-light">
+          Go Back
+        </Link>
+      )}
       <h1>Latest Products</h1>
       {loading ? (
         <Loader />
@@ -39,6 +62,13 @@ const HomeScreen = () => {
           ))}
         </Row>
       )}
+
+      <Paginate
+        page={page}
+        pages={keyword ? products.length / pageSize : pages}
+        keyword={keyword}
+        pathname={location.pathname}
+      />
     </>
   );
 };
