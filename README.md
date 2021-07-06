@@ -40,12 +40,12 @@
 1. Open 2 separate terminals
 2. In terminal 1,
 ```
+git clone https://github.com/yinhang1107/pro-shop.git
 cd pro-shop/frontend
 npm i
 ```
 3. In terminal 2,
 ```
-git clone https://github.com/yinhang1107/pro-shop.git
 cd pro-shop
 npm i
 cd backend
